@@ -1,0 +1,20 @@
+{
+  "note_bn": "এই তালিকাটি একটি স্বেচ্ছাসেবী, কমিউনিটি-কিউরেটেড তালিকা। রুট, ভাড়া ও সময়সূচি পরিবর্তন হতে পারে — চূড়ান্ত সিদ্ধান্তের আগে স্থানীয়ভাবে যাচাই করুন।",
+  "note_en": "This is a volunteer, community-curated list. Routes, operators and schedules change — verify locally before relying on it completely.",
+  "routes": [
+    {"route_no": "1", "operator": "মিরপুর লিংক", "stops": ["gabtoli", "mirpur1", "kallyanpur", "shyamoli", "mohammadpur", "panthapath", "newmarket", "azimpur", "lalbagh", "sadarghat"]},
+    {"route_no": "6", "operator": "বিকল্প অটো সার্ভিস", "stops": ["abdullahpur", "uttara3", "uttara7", "khilkhet", "airport", "banani", "mohakhali", "farmgate", "shahbagh", "paltan", "motijheel"]},
+    {"route_no": "12", "operator": "ট্রাস্ট পরিবহন", "stops": ["mirpur10", "mirpur1", "agargaon", "farmgate", "kawranbazar", "shahbagh", "paltan", "motijheel", "sayedabad"]},
+    {"route_no": "22", "operator": "বসুমতি ট্রান্সপোর্ট", "stops": ["gulshan2", "gulshan1", "badda", "rampura", "malibagh", "khilgaon", "jatrabari"]},
+    {"route_no": "34", "operator": "তুরাগ পরিবহন", "stops": ["tongi", "abdullahpur", "uttara7", "khilkhet", "airport", "banani", "mohakhali", "farmgate", "kawranbazar", "shahbagh", "gulistan"]},
+    {"route_no": "8", "operator": "অনাবিল সুপার", "stops": ["mohammadpur", "rayerbazar", "dhanmondi32", "dhanmondi27", "sciencelab", "elephantroad", "newmarket", "shahbagh", "paltan", "motijheel"]},
+    {"route_no": "45", "operator": "গাবতলী এক্সপ্রেস", "stops": ["gabtoli", "mirpur1", "shyamoli", "mohammadpur", "panthapath", "farmgate", "shantinagar", "malibagh", "khilgaon", "jatrabari"]},
+    {"route_no": "3", "operator": "আলিফ পরিবহন", "stops": ["uttara7", "khilkhet", "banani", "mohakhali", "farmgate", "kawranbazar", "shahbagh", "gulistan", "sadarghat"]},
+    {"route_no": "19", "operator": "বিহঙ্গ পরিবহন", "stops": ["baridhara", "nikunja", "badda", "rampura", "malibagh", "shantinagar", "paltan", "motijheel"]},
+    {"route_no": "27", "operator": "শিকড় পরিবহন", "stops": ["mirpur10", "agargaon", "shyamoli", "mohammadpur", "panthapath", "newmarket", "azimpur"]},
+    {"route_no": "51", "operator": "রাজধানী সার্ভিস", "stops": ["airport", "khilkhet", "banani", "mohakhali", "farmgate", "shahbagh", "paltan", "motijheel", "sayedabad", "jatrabari"]},
+    {"route_no": "15", "operator": "গুলশান চাকা", "stops": ["gulshan1", "mohakhali", "farmgate", "kawranbazar", "panthapath", "shyamoli", "mirpur1", "gabtoli"]},
+    {"route_no": "40", "operator": "ওয়ারী উত্তরা লিংক", "stops": ["wari", "motijheel", "paltan", "shantinagar", "mohakhali", "banani", "khilkhet", "uttara7"]},
+    {"route_no": "9", "operator": "নবীন পরিবহন", "stops": ["khilgaon", "malibagh", "shantinagar", "farmgate", "panthapath", "shyamoli", "mirpur1", "gabtoli"]}
+  ]
+}

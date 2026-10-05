@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>কমিউট | Commute — ভাড়া অনুমান</title>
+<meta name="description" content="রিকশা ও সিএনজি ভাড়া অনুমান এবং বাস রুট খোঁজার অফলাইন অ্যাপ">
+<meta name="theme-color" content="#F4A300">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Baloo+Da+2:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ TOP APP BAR ============ -->
+<header class="app-bar">
+  <div class="app-bar-stripe" aria-hidden="true"></div>
+  <div class="app-bar-inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="12" cy="36" r="6" fill="var(--ink)"/>
+        <circle cx="34" cy="36" r="6" fill="var(--ink)"/>
+        <path d="M6 36 L10 18 L28 18 L34 36" stroke="var(--ink)" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M10 18 L16 8 L24 8" stroke="var(--ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M17 18 L17 30" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-bn">কমিউট</span>
+        <span class="brand-en">Commute</span>
+      </div>
+    </div>
+    <button id="net-status" class="net-pill" type="button" title="সংযোগ অবস্থা">
+      <span class="dot"></span><span id="net-status-label">অনলাইন</span>
+    </button>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="প্রধান মেনু">
+    <button class="tab active" data-tab="estimate" role="tab" aria-selected="true">ভাড়া অনুমান</button>
+    <button class="tab" data-tab="bus" role="tab" aria-selected="false">বাস খুঁজুন</button>
+    <button class="tab" data-tab="history" role="tab" aria-selected="false">আমার হিসাব</button>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============ TAB: FARE ESTIMATOR ============ -->
+  <section id="tab-estimate" class="tab-panel active" aria-labelledby="tab-estimate-h">
+    <h1 id="tab-estimate-h" class="sr-only">ভাড়া অনুমান</h1>
+
+    <form id="fare-form" class="card route-card" autocomplete="off">
+      <div class="field">
+        <label for="from-input">কোথা থেকে</label>
+        <div class="autocomplete">
+          <input type="text" id="from-input" placeholder="যেমন: ফার্মগেট" required inputmode="search">
+          <ul id="from-list" class="suggest-list" hidden></ul>
+        </div>
+      </div>
+
+      <button type="button" id="swap-btn" class="swap-btn" title="জায়গা অদলবদল করুন" aria-label="অদলবদল">⇅</button>
+
+      <div class="field">
+        <label for="to-input">কোথায় যাবেন</label>
+        <div class="autocomplete">
+          <input type="text" id="to-input" placeholder="যেমন: গুলশান ১" required inputmode="search">
+          <ul id="to-list" class="suggest-list" hidden></ul>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="vehicle-select">বাহন</label>
+          <select id="vehicle-select">
+            <option value="rickshaw">রিকশা</option>
+            <option value="cng">সিএনজি অটো</option>
+          </select>
+        </div>
+        <div class="field checkbox-field">
+          <label for="rain-toggle" class="checkbox-label">
+            <input type="checkbox" id="rain-toggle">
+            <span>🌧️ বৃষ্টি হচ্ছে</span>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" id="estimate-btn" class="btn-primary btn-huge">ভাড়া অনুমান করুন</button>
+    </form>
+
+    <!-- Frequent / quick routes -->
+    <div id="frequent-wrap" class="frequent-wrap" hidden>
+      <h2 class="section-label">দ্রুত পুনরায় ব্যবহার</h2>
+      <div id="frequent-list" class="chip-row"></div>
+    </div>
+
+    <!-- Result -->
+    <div id="result" class="result-wrap" hidden>
+      <div class="fare-plate">
+        <div class="fare-plate-corner tl" aria-hidden="true"></div>
+        <div class="fare-plate-corner tr" aria-hidden="true"></div>
+        <div class="fare-plate-corner bl" aria-hidden="true"></div>
+        <div class="fare-plate-corner br" aria-hidden="true"></div>
+        <p class="fare-plate-label">ন্যায্য ভাড়া (রাউন্ড ট্রিপ নয়)</p>
+        <p class="fare-plate-amount"><span id="fare-low">০</span>–<span id="fare-high">০</span> <span class="taka">৳</span></p>
+        <p id="confidence-badge" class="confidence-badge">শুধু অনুমান</p>
+      </div>
+
+      <div class="result-details">
+        <div class="detail-row">
+          <span>দূরত্ব (আনুমানিক রাস্তা)</span>
+          <strong id="detail-distance">—</strong>
+        </div>
+        <div class="detail-row">
+          <span>বেস রেট প্রতি কিমি</span>
+          <strong id="detail-rate">—</strong>
+        </div>
+        <div class="detail-row" id="surge-row" hidden>
+          <span>ব্যস্ত সময়ের সারচার্জ</span>
+          <strong id="detail-surge">—</strong>
+        </div>
+        <div class="detail-row" id="rain-row" hidden>
+          <span>বৃষ্টির সারচার্জ</span>
+          <strong id="detail-rain">—</strong>
+        </div>
+        <div class="detail-row" id="community-row" hidden>
+          <span>কমিউনিটি গড় ভাড়া</span>
+          <strong id="detail-community">—</strong>
+        </div>
+      </div>
+
+      <button id="bargain-btn" class="btn-secondary" type="button">দরদাম করার সহায়ক লাইন দেখান</button>
+      <p id="bargain-line" class="bargain-line" hidden></p>
+
+      <button id="log-fare-btn" class="btn-outline btn-huge" type="button">রাইড শেষে আসল ভাড়া লগ করুন</button>
+    </div>
+
+    <!-- Log actual fare panel (shown after a ride) -->
+    <div id="log-panel" class="card log-panel" hidden>
+      <h2 class="section-label">আপনি আসলে কত দিয়েছেন?</h2>
+      <p class="hint-text" id="log-route-hint"></p>
+      <div class="field">
+        <label for="paid-input">দেওয়া ভাড়া (৳)</label>
+        <input type="number" id="paid-input" min="1" step="1" inputmode="numeric" placeholder="যেমন: ৩০">
+      </div>
+      <div class="log-actions">
+        <button id="log-cancel-btn" class="btn-outline" type="button">বাতিল</button>
+        <button id="log-submit-btn" class="btn-primary" type="button">জমা দিন</button>
+      </div>
+      <p class="hint-text small">এই তথ্য আপনার ডিভাইসেই থাকে এবং পরের বার একই রুটের অনুমান আরও নির্ভুল করতে ব্যবহৃত হয়।</p>
+    </div>
+  </section>
+
+  <!-- ============ TAB: BUS FINDER ============ -->
+  <section id="tab-bus" class="tab-panel" aria-labelledby="tab-bus-h">
+    <h1 id="tab-bus-h" class="sr-only">বাস রুট খুঁজুন</h1>
+    <form id="bus-form" class="card route-card" autocomplete="off">
+      <div class="field">
+        <label for="bus-from-input">কোথা থেকে</label>
+        <div class="autocomplete">
+          <input type="text" id="bus-from-input" placeholder="যেমন: মিরপুর ১০" inputmode="search">
+          <ul id="bus-from-list" class="suggest-list" hidden></ul>
+        </div>
+      </div>
+      <button type="button" id="bus-swap-btn" class="swap-btn" title="অদলবদল" aria-label="অদলবদল">⇅</button>
+      <div class="field">
+        <label for="bus-to-input">কোথায় যাবেন</label>
+        <div class="autocomplete">
+          <input type="text" id="bus-to-input" placeholder="যেমন: মতিঝিল" inputmode="search">
+          <ul id="bus-to-list" class="suggest-list" hidden></ul>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary btn-huge">বাস খুঁজুন</button>
+    </form>
+
+    <div id="bus-results" class="bus-results"></div>
+    <p class="hint-text dataset-note"></p>
+  </section>
+
+  <!-- ============ TAB: HISTORY ============ -->
+  <section id="tab-history" class="tab-panel" aria-labelledby="tab-history-h">
+    <h1 id="tab-history-h" class="sr-only">আমার হিসাব</h1>
+
+    <div class="card stat-card">
+      <h2 class="section-label">এই ডিভাইসে জমা করা তথ্য</h2>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <span id="stat-logs" class="stat-num">০</span>
+          <span class="stat-caption">মোট লগ</span>
+        </div>
+        <div class="stat-box">
+          <span id="stat-routes" class="stat-num">০</span>
+          <span class="stat-caption">আলাদা রুট</span>
+        </div>
+        <div class="stat-box">
+          <span id="stat-detour" class="stat-num">—</span>
+          <span class="stat-caption">শেখা ডিটুর ফ্যাক্টর</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-label">সাম্প্রতিক লগ</h2>
+      <ul id="history-list" class="history-list">
+        <li class="empty-state">এখনো কোনো ভাড়া লগ করা হয়নি।</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="script.js"></script>
+</body>
+</html>

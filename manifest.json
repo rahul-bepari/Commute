@@ -1,0 +1,15 @@
+{
+  "name": "কমিউট — Commute",
+  "short_name": "কমিউট",
+  "description": "রিকশা ও সিএনজি ভাড়া অনুমান এবং বাস রুট খোঁজার অফলাইন অ্যাপ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFF8EA",
+  "theme_color": "#F4A300",
+  "lang": "bn",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
